@@ -6,9 +6,8 @@ linters-settings:
   gofmt:
     simplify: true
   goimports:
-    local-prefixes: github.com/mattermost/mattermost-starter-template
+    local-prefixes: github.com/mattermost/mattermost-plugin-attachments-remover
   govet:
-    check-shadowing: true
     enable-all: true
     disable:
       - fieldalignment
