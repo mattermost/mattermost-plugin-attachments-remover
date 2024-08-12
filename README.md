@@ -2,7 +2,10 @@
 
 ## Features
 
-- Allows users and sysadmins to delete attachments from posts via a context menu option
+- Adds a post menu option to remove attachments
+- Only post author or user with permission to edit other's post can remove attachments
+- Respects the `PostEditTimeLimit` setting
+- If post contains no message (only attachments) the post is removed
 
 ## Development
 
