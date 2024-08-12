@@ -1,6 +1,6 @@
 {
     "id": "com.mattermost.attachments-remover",
-    "name": "Attachments manager",
+    "name": "Attachments remover",
     "description": "This plugin allows you more ways to manage attachments in Mattermost.",
     "homepage_url": "https://github.com/mattermost/mattermost-plugin-attachments-remover",
     "support_url": "https://github.com/mattermost/mattermost-plugin-attachments-remover/issues",
