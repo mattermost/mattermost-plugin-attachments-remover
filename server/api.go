@@ -38,23 +38,34 @@ func (a *API) handlerRemoveAttachments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Soft-delete the attachments
+	// If the message is empty just delete the post
+	if post.Message == "" {
+		if err := a.plugin.API.DeletePost(post.Id); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	// Otherwise, update the post without attachments and then soft-delete the attachments from the channel
+	originalFileIDs := post.FileIds
+
+	post.FileIds = []string{}
+	newPost, appErr := a.plugin.API.UpdatePost(post)
+	if appErr != nil {
+		http.Error(w, appErr.Error(), appErr.StatusCode)
+		return
+	}
+
+	// Soft-delete the attachments from channel
 	for _, fileID := range post.FileIds {
 		if err := a.plugin.SQLStore.DetatchAttachmentFromChannel(fileID); err != nil {
 			a.plugin.API.LogError("error detaching attachment from channel", "err", err)
 			http.Error(w, "Internal server error, check logs", http.StatusInternalServerError)
 			return
 		}
-	}
-
-	originalFileIDs := post.FileIds
-
-	// Edit the post to remove the attachments
-	post.FileIds = []string{}
-	newPost, appErr := a.plugin.API.UpdatePost(post)
-	if appErr != nil {
-		http.Error(w, appErr.Error(), appErr.StatusCode)
-		return
 	}
 
 	// Attach the original file IDs to the original post so history is not lost
