@@ -38,17 +38,6 @@ func (a *API) handlerRemoveAttachments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If the message is empty just delete the post
-	if post.Message == "" {
-		if err := a.plugin.API.DeletePost(post.Id); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-
 	// Otherwise, update the post without attachments and then soft-delete the attachments from the channel
 	originalFileIDs := post.FileIds
 
