@@ -14,7 +14,7 @@ const (
 	fileInfoTable = "FileInfo"
 )
 
-func (s *SQLStore) DetatchAttachmentFromChannel(fileID string) error {
+func (s *SQLStore) DetachAttachmentFromChannel(fileID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
