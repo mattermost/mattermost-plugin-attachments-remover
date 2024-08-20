@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/mattermost/mattermost/server/public/model"
 )
 
 type API struct {
@@ -24,9 +25,18 @@ func (a *API) handlerRemoveAttachments(w http.ResponseWriter, r *http.Request) {
 	}
 
 	postID := r.FormValue("post_id")
+	if !model.IsValidId(postID) {
+		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		return
+	}
 
 	// Check if the user is the post author or a system admin
 	userID := r.Header.Get("Mattermost-User-ID")
+	if !model.IsValidId(userID) {
+		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		return
+	}
+
 	post, appErr := a.plugin.API.GetPost(postID)
 	if appErr != nil {
 		http.Error(w, appErr.Error(), appErr.StatusCode)
