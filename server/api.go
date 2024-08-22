@@ -85,7 +85,7 @@ func setupAPI(plugin *Plugin) (*API, error) {
 
 	group := api.router.PathPrefix("/api/v1").Subrouter()
 	group.Use(authorizationRequiredMiddleware)
-	group.HandleFunc("/remove_attachments", api.handlerRemoveAttachments)
+	group.HandleFunc("/remove_attachments", api.handlerRemoveAttachments).Methods(http.MethodPost)
 
 	return api, nil
 }
