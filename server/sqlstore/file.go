@@ -41,8 +41,8 @@ func (s *SQLStore) DetachAttachmentFromChannel(fileID string) error {
 	_, err = tx.ExecContext(ctx, q, args...)
 	if err != nil {
 		s.logger.Error("error detaching attachment from channel", "fileId", fileID, "err", err)
-		if err := tx.Rollback(); err != nil {
-			s.logger.Error("error rolling back transaction", "err", err)
+		if errRollback := tx.Rollback(); errRollback != nil {
+			s.logger.Error("error rolling back transaction", "err", errRollback)
 		}
 		return fmt.Errorf("error detaching attachment from channel: %w", err)
 	}
