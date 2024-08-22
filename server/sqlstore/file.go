@@ -20,7 +20,6 @@ func (s *SQLStore) DetachAttachmentFromChannel(fileID string) error {
 
 	update := map[string]interface{}{
 		"ChannelId": "",
-		"PostId":    "",
 		"DeleteAt":  model.GetMillis(),
 	}
 
@@ -42,7 +41,8 @@ func (s *SQLStore) DetachAttachmentFromChannel(fileID string) error {
 	_, err = tx.ExecContext(ctx, q, args...)
 	if err != nil {
 		s.logger.Error("error detaching attachment from channel", "fileId", fileID, "err", err)
-		return tx.Rollback()
+		defer tx.Rollback()
+		return fmt.Errorf("error detaching attachment from channel: %w", err)
 	}
 
 	if err := tx.Commit(); err != nil {
