@@ -59,7 +59,7 @@ func (a *API) handlerRemoveAttachments(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Soft-delete the attachments from channel
-	for _, fileID := range post.FileIds {
+	for _, fileID := range originalFileIDs {
 		if err := a.plugin.SQLStore.DetachAttachmentFromChannel(fileID); err != nil {
 			a.plugin.API.LogError("error detaching attachment from channel", "err", err)
 			http.Error(w, "Internal server error, check logs", http.StatusInternalServerError)
