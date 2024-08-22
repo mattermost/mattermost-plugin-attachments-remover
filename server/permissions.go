@@ -23,7 +23,14 @@ func (p *Plugin) userHasRemovePermissionsToPost(userID, channelID, postID string
 		return "Internal error, check with your system administrator for assistance"
 	}
 
-	if post.UserId != user.Id && !p.API.HasPermissionToChannel(userID, channelID, model.PermissionEditOthersPosts) {
+	var permission *model.Permission
+	if post.UserId == user.Id {
+		permission = model.PermissionEditPost
+	} else {
+		permission = model.PermissionEditOthersPosts
+	}
+
+	if !p.API.HasPermissionToChannel(userID, channelID, permission) {
 		return "Not authorized"
 	}
 
