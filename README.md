@@ -1,4 +1,4 @@
-# Plugin Starter Template [![CircleCI branch](https://img.shields.io/circleci/project/github/mattermost/mattermost-plugin-attachments-remover/master.svg)](https://circleci.com/gh/mattermost/mattermost-plugin-attachments-remover)
+# Attachment Remover [![CircleCI branch](https://img.shields.io/circleci/project/github/mattermost/mattermost-plugin-attachments-remover/master.svg)](https://circleci.com/gh/mattermost/mattermost-plugin-attachments-remover)
 
 ## Features
 
