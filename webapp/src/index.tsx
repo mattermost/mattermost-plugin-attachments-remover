@@ -2,6 +2,8 @@ import {Store, Action} from 'redux';
 
 import {GlobalState} from 'mattermost-redux/types/store';
 import {getPost} from 'mattermost-redux/selectors/entities/posts';
+import {haveIChannelPermission} from 'mattermost-redux/selectors/entities/roles';
+import {getCurrentUser} from 'mattermost-redux/selectors/entities/common';
 
 import manifest from '@/manifest';
 
@@ -23,7 +25,22 @@ export default class Plugin {
                 const post = getPost(state, postID);
 
                 // Don't show up if the post has no attachments. Permissions are checked server-side.
-                return typeof post.file_ids?.length !== 'undefined' && post.file_ids?.length > 0;
+                if (!(typeof post.file_ids?.length !== 'undefined' && post.file_ids?.length > 0)) {
+                    return false;
+                }
+
+                const user = getCurrentUser(state);
+
+                // Check permissions for the user
+                let permission = 'edit_post';
+                if (post.user_id !== user.id) {
+                    permission = 'delete_others_posts';
+                }
+
+                return haveIChannelPermission(state, {
+                    channel: post.channel_id,
+                    permission,
+                });
             },
         );
     }
