@@ -4,6 +4,7 @@ import {GlobalState} from 'mattermost-redux/types/store';
 import {getPost} from 'mattermost-redux/selectors/entities/posts';
 import {haveIChannelPermission} from 'mattermost-redux/selectors/entities/roles';
 import {getCurrentUser} from 'mattermost-redux/selectors/entities/common';
+import {getConfig} from 'mattermost-redux/selectors/entities/general';
 
 import manifest from '@/manifest';
 
@@ -24,19 +25,24 @@ export default class Plugin {
                 const state = store.getState();
                 const post = getPost(state, postID);
 
-                // Don't show up if the post has no attachments. Permissions are checked server-side.
+                // Check if post is editable
+                const config = getConfig(state);
+                const edit_time_limit : number = config.PostEditTimeLimit ? Number(config.PostEditTimeLimit) : -1;
+                if (!(edit_time_limit !== -1 && post.create_at + (edit_time_limit * 1000) > Date.now())) {
+                    return false;
+                }
+
+                // Check if post has attachments
                 if (!(typeof post.file_ids?.length !== 'undefined' && post.file_ids?.length > 0)) {
                     return false;
                 }
 
+                // Check if the user has permissions to edit his own post or edit other's posts if not the author
                 const user = getCurrentUser(state);
-
-                // Check permissions for the user
                 let permission = 'edit_post';
                 if (post.user_id !== user.id) {
                     permission = 'delete_others_posts';
                 }
-
                 return haveIChannelPermission(state, {
                     channel: post.channel_id,
                     permission,
