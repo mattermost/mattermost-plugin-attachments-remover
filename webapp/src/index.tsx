@@ -25,11 +25,7 @@ export default class Plugin {
             (postID) => {
                 const state = store.getState();
                 const post = getPost(state, postID);
-
-                // Check if post is editable
-                const config = getConfig(state);
-                const edit_time_limit : number = config.PostEditTimeLimit ? Number(config.PostEditTimeLimit) : -1;
-                if (edit_time_limit !== -1 && post.create_at + (edit_time_limit * 1000) < Date.now()) {
+                if (!post) {
                     return false;
                 }
 
@@ -44,10 +40,21 @@ export default class Plugin {
                 if (post.user_id !== user.id) {
                     permission = Permissions.EDIT_OTHERS_POSTS;
                 }
-                return haveIChannelPermission(state, {
+                if (!haveIChannelPermission(state, {
                     channel: post.channel_id,
                     permission,
-                });
+                })) {
+                    return false;
+                }
+
+                // Check if post is editable
+                const config = getConfig(state);
+                const edit_time_limit : number = config.PostEditTimeLimit ? Number(config.PostEditTimeLimit) : -1;
+                if (edit_time_limit !== -1 && post.create_at + (edit_time_limit * 1000) < Date.now()) {
+                    return false;
+                }
+
+                return true;
             },
         );
     }
