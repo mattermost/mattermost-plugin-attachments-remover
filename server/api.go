@@ -43,7 +43,13 @@ func (a *API) handlerRemoveAttachments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if errReason := a.plugin.userHasRemovePermissionsToPost(userID, post.ChannelId, postID); errReason != "" {
+	channel, appErr := a.plugin.API.GetChannel(post.ChannelId)
+	if appErr != nil {
+		http.Error(w, appErr.Error(), appErr.StatusCode)
+		return
+	}
+
+	if errReason := a.plugin.userHasRemovePermissionsToPost(userID, channel, post); errReason != "" {
 		http.Error(w, errReason, http.StatusForbidden)
 		return
 	}
