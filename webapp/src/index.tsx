@@ -29,7 +29,7 @@ export default class Plugin {
                 // Check if post is editable
                 const config = getConfig(state);
                 const edit_time_limit : number = config.PostEditTimeLimit ? Number(config.PostEditTimeLimit) : -1;
-                if (!(edit_time_limit !== -1 && post.create_at + (edit_time_limit * 1000) > Date.now())) {
+                if (edit_time_limit !== -1 && post.create_at + (edit_time_limit * 1000) < Date.now()) {
                     return false;
                 }
 
