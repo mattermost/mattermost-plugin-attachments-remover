@@ -1,10 +1,11 @@
 import {Store, Action} from 'redux';
 
 import {GlobalState} from 'mattermost-redux/types/store';
+import {Permissions} from 'mattermost-redux/constants';
+import {getConfig} from 'mattermost-redux/selectors/entities/general';
+import {getCurrentUser} from 'mattermost-redux/selectors/entities/common';
 import {getPost} from 'mattermost-redux/selectors/entities/posts';
 import {haveIChannelPermission} from 'mattermost-redux/selectors/entities/roles';
-import {getCurrentUser} from 'mattermost-redux/selectors/entities/common';
-import {getConfig} from 'mattermost-redux/selectors/entities/general';
 
 import manifest from '@/manifest';
 
@@ -39,9 +40,9 @@ export default class Plugin {
 
                 // Check if the user has permissions to edit his own post or edit other's posts if not the author
                 const user = getCurrentUser(state);
-                let permission = 'edit_post';
+                let permission = Permissions.EDIT_POST;
                 if (post.user_id !== user.id) {
-                    permission = 'delete_others_posts';
+                    permission = Permissions.EDIT_OTHERS_POSTS;
                 }
                 return haveIChannelPermission(state, {
                     channel: post.channel_id,
