@@ -3,6 +3,7 @@ import {Store, Action} from 'redux';
 import {GlobalState} from 'mattermost-redux/types/store';
 import {Permissions} from 'mattermost-redux/constants';
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
+import {getCurrentTeam} from 'mattermost-redux/selectors/entities/teams';
 import {getCurrentUser} from 'mattermost-redux/selectors/entities/common';
 import {getPost} from 'mattermost-redux/selectors/entities/posts';
 import {haveIChannelPermission} from 'mattermost-redux/selectors/entities/roles';
@@ -36,11 +37,13 @@ export default class Plugin {
 
                 // Check if the user has permissions to edit his own post or edit other's posts if not the author
                 const user = getCurrentUser(state);
+                const team = getCurrentTeam(state);
                 let permission = Permissions.EDIT_POST;
                 if (post.user_id !== user.id) {
                     permission = Permissions.EDIT_OTHERS_POSTS;
                 }
                 if (!haveIChannelPermission(state, {
+                    team: team.id,
                     channel: post.channel_id,
                     permission,
                 })) {
