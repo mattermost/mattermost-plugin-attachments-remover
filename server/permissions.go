@@ -3,11 +3,11 @@ package main
 import "github.com/mattermost/mattermost/server/public/model"
 
 // userHasRemovePermissionsToPost checks if the user has permissions to remove attachments from a post
-// based on the post ID, the user ID, and the channel ID.
-// Returns an error message if the user does not have permissions, or an empty string if the user has permissions.
-func (p *Plugin) userHasRemovePermissionsToPost(userID, channelID, postID string) string {
+// based on the user ID, channel, and post. It returns an error message if the user does not have permissions,
+// The channel is used to get the team ID to check for team permissions.
+func (p *Plugin) userHasRemovePermissionsToPost(userID string, channel *model.Channel, post *model.Post) string {
 	// Check if the post exists
-	post, appErr := p.API.GetPost(postID)
+	post, appErr := p.API.GetPost(post.Id)
 	if appErr != nil {
 		return "Post does not exist"
 	}
@@ -30,7 +30,7 @@ func (p *Plugin) userHasRemovePermissionsToPost(userID, channelID, postID string
 		permission = model.PermissionEditOthersPosts
 	}
 
-	if !p.API.HasPermissionToChannel(userID, channelID, permission) {
+	if !p.API.HasPermissionToChannel(userID, channel.Id, permission) && !p.API.HasPermissionToTeam(userID, channel.TeamId, permission) {
 		return "Not authorized"
 	}
 

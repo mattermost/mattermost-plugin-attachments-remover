@@ -43,8 +43,19 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 		return p.createErrorCommandResponse("Invalid post ID"), nil
 	}
 
+	// Check if the post exists
+	post, appErr := p.API.GetPost(postID)
+	if appErr != nil {
+		return p.createErrorCommandResponse(appErr.Error()), nil
+	}
+
+	channel, appErr := p.API.GetChannel(post.ChannelId)
+	if appErr != nil {
+		return p.createErrorCommandResponse(appErr.Error()), nil
+	}
+
 	// Check if the user has permissions to remove attachments from the post
-	if errReason := p.userHasRemovePermissionsToPost(args.UserId, args.ChannelId, postID); errReason != "" {
+	if errReason := p.userHasRemovePermissionsToPost(args.UserId, channel, post); errReason != "" {
 		return p.createErrorCommandResponse(errReason), nil
 	}
 
