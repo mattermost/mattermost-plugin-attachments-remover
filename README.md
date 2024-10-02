@@ -1,4 +1,6 @@
-# Attachment Remover [![CircleCI branch](https://img.shields.io/circleci/project/github/mattermost/mattermost-plugin-attachments-remover/master.svg)](https://circleci.com/gh/mattermost/mattermost-plugin-attachments-remover)
+# Attachment Remover
+
+[![ci](https://github.com/mattermost/mattermost-plugin-attachments-remover/actions/workflows/ci.yml/badge.svg)](https://github.com/mattermost/mattermost-plugin-attachments-remover/actions/workflows/ci.yml)
 
 ## Features
 
@@ -6,6 +8,13 @@
 - Only post author or user with permission to edit other's post can remove attachments
 - Respects the `PostEditTimeLimit` setting
 - If post contains no message (only attachments) the post is removed
+
+## Usage
+
+1. Click on the post actions menu (four squares at the top right of the post, see screenshot)
+2. Click on the "Remove Attachments" option.
+
+![Usage](.readme/usage.jpg)
 
 ## Development
 
